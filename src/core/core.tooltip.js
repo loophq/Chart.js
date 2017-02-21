@@ -213,23 +213,29 @@ module.exports = function(Chart) {
 
 		// Title width
 		var widthPadding = 0;
-		var maxLineWidth = function(line) {
-			width = Math.max(width, ctx.measureText(line).width + widthPadding);
+		var maxLineWidth = function(fontSize, line) {
+			if (helpers.isCallback(line)) {
+				if (line.measure != null) {
+					width = Math.max(width, line.measure({fontSize: fontSize}));
+				}
+			} else {
+				width = Math.max(width, ctx.measureText(line).width + widthPadding);
+			}
 		};
 
 		ctx.font = helpers.fontString(titleFontSize, model._titleFontStyle, model._titleFontFamily);
-		helpers.each(model.title, maxLineWidth);
+		helpers.each(model.title, maxLineWidth.bind(null, titleFontSize));
 
 		// Body width
 		ctx.font = helpers.fontString(bodyFontSize, model._bodyFontStyle, model._bodyFontFamily);
-		helpers.each(model.beforeBody.concat(model.afterBody), maxLineWidth);
+		helpers.each(model.beforeBody.concat(model.afterBody), maxLineWidth.bind(null, bodyFontSize));
 
 		// Body lines may include some extra width due to the color box
 		widthPadding = model.displayColors ? (bodyFontSize + 2) : 0;
 		helpers.each(body, function(bodyItem) {
-			helpers.each(bodyItem.before, maxLineWidth);
-			helpers.each(bodyItem.lines, maxLineWidth);
-			helpers.each(bodyItem.after, maxLineWidth);
+			helpers.each(bodyItem.before, maxLineWidth.bind(null, bodyFontSize));
+			helpers.each(bodyItem.lines, maxLineWidth.bind(null, bodyFontSize));
+			helpers.each(bodyItem.after, maxLineWidth.bind(null, bodyFontSize));
 		});
 
 		// Reset back to 0
@@ -237,7 +243,7 @@ module.exports = function(Chart) {
 
 		// Footer width
 		ctx.font = helpers.fontString(footerFontSize, model._footerFontStyle, model._footerFontFamily);
-		helpers.each(model.footer, maxLineWidth);
+		helpers.each(model.footer, maxLineWidth.bind(null, footerFontSize));
 
 		// Add padding
 		width += 2 * model.xPadding;
