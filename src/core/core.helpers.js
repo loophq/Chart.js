@@ -859,7 +859,8 @@ module.exports = function(Chart) {
 				&& helpers.isCallback(thing) !== true) {
 				longest = helpers.measureText(ctx, data, gc, longest, thing);
 			} else if (helpers.isCallback(thing) && thing.measure != null) {
-				longest = thing.measure(ctx, data, gc, longest, fontSize);
+				var thingWidth = thing.measure({fontSize: fontSize});
+				longest = thingWidth === undefined || longest > thingWidth ? longest : thingWidth;
 			} else if (helpers.isArray(thing)) {
 				// if it is an array lets measure each element
 				// to do maybe simplify this function a bit so we can do this more recursively?
@@ -871,7 +872,8 @@ module.exports = function(Chart) {
 						&& !helpers.isCallback(nestedThing)) {
 						longest = helpers.measureText(ctx, data, gc, longest, nestedThing);
 					} else if (helpers.isCallback(nestedThing) && nestedThing.measure != null) {
-						longest = nestedThing.measure(ctx, data, gc, longest, fontSize);
+						var thingWidth = thing.measure({fontSize: fontSize});
+						longest = thingWidth === undefined || longest > thingWidth ? longest : thingWidth;
 					}
 				});
 			}

@@ -39,8 +39,8 @@
 	  var image = new Image();
 	  image.src = arg;
 	  var result = drawImageLabelFromImageResource(image);
-	  result.measure = function(ctx, data, gc, longest, fontSize) {
-	    return fontSize === undefined ? longest : longest > fontSize ? longest : fontSize;
+	  result.measure = function(args) {
+	    return args.fontSize;
 	  };
 	  return result;
 	}

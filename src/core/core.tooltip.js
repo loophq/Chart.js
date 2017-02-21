@@ -630,11 +630,11 @@ module.exports = function(Chart) {
 
 				var i, len;
 				for (i = 0, len = title.length; i < len; ++i) {
-					if (typeof title[i] === 'function') {
+					if (helpers.isCallback(title[i])) {
 						ctx.save();
 						ctx.translate(pt.x, pt.y);
 						ctx.globalAlpha = opacity;
-						title[i]({canvasContext: ctx, width: titleFontSize, height: titleFontSize})
+						title[i]({canvasContext: ctx, width: titleFontSize, height: titleFontSize});
 						ctx.restore();
 					} else {
 						ctx.fillText(title[i], pt.x, pt.y);

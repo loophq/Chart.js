@@ -700,6 +700,10 @@ module.exports = function(Chart) {
 					} else if (helpers.isCallback(label)) {
 						var size = tickFont.size;
 						context.save();
+						if (label.measure != null) {
+							var width = label.measure({fontSize: tickFont.size});
+							context.translate(-width / 2, 0);
+						}
 						label({canvasContext: context, width: size, height: size});
 						context.restore();
 					} else {
