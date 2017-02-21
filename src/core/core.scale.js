@@ -695,6 +695,11 @@ module.exports = function(Chart) {
 							// apply same lineSpacing as calculated @ L#320
 							y += (tickFont.size * 1.5);
 						}
+					} else if (helpers.isCallback(label)) {
+						var size = tickFont.size;
+						context.save();
+						label({canvasContext: context, width: size, height: size});
+						context.restore();
 					} else {
 						context.fillText(label, 0, 0);
 					}

@@ -853,14 +853,14 @@ module.exports = function(Chart) {
 		var longest = 0;
 		helpers.each(arrayOfThings, function(thing) {
 			// Undefined strings and arrays should not be measured
-			if (thing !== undefined && thing !== null && helpers.isArray(thing) !== true) {
+			if (thing !== undefined && thing !== null && helpers.isArray(thing) !== true && helpers.isCallback(thing) !== true) {
 				longest = helpers.measureText(ctx, data, gc, longest, thing);
 			} else if (helpers.isArray(thing)) {
 				// if it is an array lets measure each element
 				// to do maybe simplify this function a bit so we can do this more recursively?
 				helpers.each(thing, function(nestedThing) {
 					// Undefined strings and arrays should not be measured
-					if (nestedThing !== undefined && nestedThing !== null && !helpers.isArray(nestedThing)) {
+					if (nestedThing !== undefined && nestedThing !== null && !helpers.isArray(nestedThing) && !helpers.isCallback(nestedThing)) {
 						longest = helpers.measureText(ctx, data, gc, longest, nestedThing);
 					}
 				});
@@ -931,6 +931,7 @@ module.exports = function(Chart) {
 		function(obj) {
 			return Object.prototype.toString.call(obj) === '[object Array]';
 		};
+	helpers.isCallback = function(obj) { return typeof obj === "function"; };
 	// ! @see http://stackoverflow.com/a/14853974
 	helpers.arrayEquals = function(a0, a1) {
 		var i, ilen, v0, v1;

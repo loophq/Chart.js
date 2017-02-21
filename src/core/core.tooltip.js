@@ -630,7 +630,15 @@ module.exports = function(Chart) {
 
 				var i, len;
 				for (i = 0, len = title.length; i < len; ++i) {
-					ctx.fillText(title[i], pt.x, pt.y);
+					if (typeof title[i] === 'function') {
+						ctx.save();
+						ctx.translate(pt.x, pt.y);
+						ctx.globalAlpha = opacity;
+						title[i]({canvasContext: ctx, width: titleFontSize, height: titleFontSize})
+						ctx.restore();
+					} else {
+						ctx.fillText(title[i], pt.x, pt.y);
+					}
 					pt.y += titleFontSize + titleSpacing; // Line Height and spacing
 
 					if (i + 1 === title.length) {
