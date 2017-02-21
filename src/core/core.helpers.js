@@ -838,7 +838,7 @@ module.exports = function(Chart) {
 	helpers.fontString = function(pixelSize, fontStyle, fontFamily) {
 		return fontStyle + ' ' + pixelSize + 'px ' + fontFamily;
 	};
-	helpers.longestText = function(ctx, font, arrayOfThings, cache) {
+	helpers.longestText = function(ctx, font, arrayOfThings, cache, fontSize) {
 		cache = cache || {};
 		var data = cache.data = cache.data || {};
 		var gc = cache.garbageCollect = cache.garbageCollect || [];
@@ -853,15 +853,25 @@ module.exports = function(Chart) {
 		var longest = 0;
 		helpers.each(arrayOfThings, function(thing) {
 			// Undefined strings and arrays should not be measured
-			if (thing !== undefined && thing !== null && helpers.isArray(thing) !== true && helpers.isCallback(thing) !== true) {
+			if (thing !== undefined
+				&& thing !== null
+				&& helpers.isArray(thing) !== true
+				&& helpers.isCallback(thing) !== true) {
 				longest = helpers.measureText(ctx, data, gc, longest, thing);
+			} else if (helpers.isCallback(thing) && thing.measure != null) {
+				longest = thing.measure(ctx, data, gc, longest, fontSize);
 			} else if (helpers.isArray(thing)) {
 				// if it is an array lets measure each element
 				// to do maybe simplify this function a bit so we can do this more recursively?
 				helpers.each(thing, function(nestedThing) {
 					// Undefined strings and arrays should not be measured
-					if (nestedThing !== undefined && nestedThing !== null && !helpers.isArray(nestedThing) && !helpers.isCallback(nestedThing)) {
+					if (nestedThing !== undefined
+						&& nestedThing !== null
+						&& !helpers.isArray(nestedThing)
+						&& !helpers.isCallback(nestedThing)) {
 						longest = helpers.measureText(ctx, data, gc, longest, nestedThing);
+					} else if (helpers.isCallback(nestedThing) && nestedThing.measure != null) {
+						longest = nestedThing.measure(ctx, data, gc, longest, fontSize);
 					}
 				});
 			}

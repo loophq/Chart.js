@@ -50,9 +50,9 @@ module.exports = function(Chart) {
 		}
 	};
 
-	function computeTextSize(context, tick, font) {
-		return helpers.isArray(tick) ?
-			helpers.longestText(context, font, tick) :
+	function computeTextSize(context, tick, font, fontSize) {
+		return helpers.isArray(tick) || helpers.isCallback(tick) ?
+			helpers.longestText(context, font, tick, null, fontSize) :
 			context.measureText(tick).width;
 	}
 
@@ -229,7 +229,8 @@ module.exports = function(Chart) {
 			var labelRotation = tickOpts.minRotation || 0;
 
 			if (me.options.display && me.isHorizontal()) {
-				var originalLabelWidth = helpers.longestText(context, tickFont.font, me.ticks, me.longestTextCache);
+				var originalLabelWidth = helpers.longestText(
+					context, tickFont.font, me.ticks, me.longestTextCache, tickFont.size);
 				var labelWidth = originalLabelWidth;
 				var cosRotation;
 				var sinRotation;
@@ -310,7 +311,8 @@ module.exports = function(Chart) {
 
 			// Don't bother fitting the ticks if we are not showing them
 			if (tickOpts.display && display) {
-				var largestTextWidth = helpers.longestText(me.ctx, tickFont.font, me.ticks, me.longestTextCache);
+				var largestTextWidth = helpers.longestText(
+					me.ctx, tickFont.font, me.ticks, me.longestTextCache, tickFont.size);
 				var tallestLabelHeightInLines = helpers.numberOfLabelLines(me.ticks);
 				var lineSpace = tickFont.size * 0.5;
 
@@ -331,10 +333,10 @@ module.exports = function(Chart) {
 					me.ctx.font = tickFont.font;
 
 					var firstTick = me.ticks[0];
-					var firstLabelWidth = computeTextSize(me.ctx, firstTick, tickFont.font);
+					var firstLabelWidth = computeTextSize(me.ctx, firstTick, tickFont.font, tickFont.size);
 
 					var lastTick = me.ticks[me.ticks.length - 1];
-					var lastLabelWidth = computeTextSize(me.ctx, lastTick, tickFont.font);
+					var lastLabelWidth = computeTextSize(me.ctx, lastTick, tickFont.font, tickFont.size);
 
 					// Ensure that our ticks are always inside the canvas. When rotated, ticks are right aligned which means that the right padding is dominated
 					// by the font height

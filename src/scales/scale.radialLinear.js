@@ -69,7 +69,7 @@ module.exports = function(Chart) {
 	function measureLabelSize(ctx, fontSize, label) {
 		if (helpers.isArray(label)) {
 			return {
-				w: helpers.longestText(ctx, ctx.font, label),
+				w: helpers.longestText(ctx, ctx.font, label, null, fontSize),
 				h: (label.length * fontSize) + ((label.length - 1) * 1.5 * fontSize)
 			};
 		}
